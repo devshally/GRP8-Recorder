@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.0
   flutter_sound: ^7.7.0+1
   permission_handler: ^5.1.0+2
   path_provider: ^1.6.27

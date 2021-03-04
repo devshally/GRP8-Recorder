@@ -142,26 +142,26 @@ class _RecorderTestState extends State<RecorderTest> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
+              RaisedButton(
                 onPressed: () {
                   record();
                 },
                 child: Text('Start'),
-                // color: Colors.green,
+                color: Colors.green,
               ),
-              ElevatedButton(
+              RaisedButton(
                 onPressed: () {
                   stopRecorder();
                 },
                 child: Text('Stop'),
-                // color: Colors.red,
+                color: Colors.red,
               ),
-              ElevatedButton(
+              RaisedButton(
                 onPressed: () {
                   play();
                 },
                 child: Text('Play'),
-                // color: Colors.blue,
+                color: Colors.blue,
               ),
             ],
           ),
