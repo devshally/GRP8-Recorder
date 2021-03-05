@@ -1,31 +1,29 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter_sound/flutter_sound.dart'; //This is the package for playing and recording sound.
-import 'package:permission_handler/permission_handler.dart'; //For permissions, check info.plist inside the ios folder to see the permission I added.
+import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+//TODO: Clean out the main.dart, move the engine to another file
+//TODO: Timer starts counting as the recorder is recording
 
 void main() {
-  runApp(MyApp());
+  runApp(MaterialApp(
+    home: SimpleRecorder(),
+  ));
 }
 
-typedef _Fn = void Function(); //Basically this is declaring void Function as _Fn so I don't have to type void function everytime I want to create a function.
+///
+typedef _Fn = void Function();
 
-class MyApp extends StatelessWidget {
+/// Example app.
+class SimpleRecorder extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      home: RecorderTest(),
-    );
-  }
+  _SimpleRecorderState createState() => _SimpleRecorderState();
 }
 
-class RecorderTest extends StatefulWidget {
-  @override
-  _RecorderTestState createState() => _RecorderTestState();
-}
-
-class _RecorderTestState extends State<RecorderTest> {
+class _SimpleRecorderState extends State<SimpleRecorder> {
   FlutterSoundPlayer _mPlayer = FlutterSoundPlayer();
   FlutterSoundRecorder _mRecorder = FlutterSoundRecorder();
   bool _mPlayerIsInited = false;
@@ -34,7 +32,6 @@ class _RecorderTestState extends State<RecorderTest> {
   final String _mPath = 'flutter_sound_example.aac';
 
   @override
-  //This starts with the app, you'll get here in your modules, i.e the initState(){}
   void initState() {
     _mPlayer.openAudioSession().then((value) {
       setState(() {
@@ -100,11 +97,11 @@ class _RecorderTestState extends State<RecorderTest> {
         _mPlayer.isStopped);
     _mPlayer
         .startPlayer(
-        fromURI: _mPath,
-        //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
-        whenFinished: () {
-          setState(() {});
-        })
+            fromURI: _mPath,
+            //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
+            whenFinished: () {
+              setState(() {});
+            })
         .then((value) {
       setState(() {});
     });
@@ -133,39 +130,94 @@ class _RecorderTestState extends State<RecorderTest> {
   }
 
   @override
-  //Feel free to play with the UI, actually please do...
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.amber,
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RaisedButton(
-                onPressed: () {
-                  record();
-                },
-                child: Text('Start'),
-                color: Colors.green,
+      appBar: AppBar(
+        backgroundColor: Colors.indigo,
+        title: const Text('Grp8 Recorder'),
+      ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.centerRight,
+                colors: [Colors.redAccent, Colors.indigo],
               ),
-              RaisedButton(
-                onPressed: () {
-                  stopRecorder();
-                },
-                child: Text('Stop'),
-                color: Colors.red,
-              ),
-              RaisedButton(
-                onPressed: () {
-                  play();
-                },
-                child: Text('Play'),
-                color: Colors.blue,
-              ),
-            ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 60.0),
+                  child: Center(
+                    child: Container(
+                      height: 120.0,
+                      width: 250.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: Colors.white38,
+                      ),
+                      //Increment numbers as the recorder is recording
+                      child: Center(
+                        child: Text(
+                          '00 : 00',
+                          style: TextStyle(fontSize: 50.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 100.0,
+                      width: 100.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(360.0),
+                        color: Colors.white38,
+                      ),
+                      child: Center(
+                        //While recording change the icon to the block icon
+                        child: FaIcon(
+                          FontAwesomeIcons.microphone,
+                          color: Colors.red,
+                          size: 30.0,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 35.0,
+                    ),
+                    Container(
+                      height: 100.0,
+                      width: 100.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(360.0),
+                        color: Colors.white38,
+                      ),
+                        child: Center(
+                          child: FaIcon(
+                            //while play change the icon to the block icon to indicate stop
+                            FontAwesomeIcons.play,
+                            size: 30.0,
+                          ),
+                        ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
