@@ -5,19 +5,21 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-//TODO: Clean out the main.dart, move the engine to another file
-//TODO: Timer starts counting as the recorder is recording
-
 void main() {
   runApp(MaterialApp(
     home: SimpleRecorder(),
   ));
 }
+String formatTime(int milliseconds) {
+  var secs = milliseconds ~/ 1000;
+  var hours = (secs ~/ 3600).toString().padLeft(2, '0');
+  var minutes = ((secs % 3600) ~/ 60).toString().padLeft(2, '0');
+  var seconds = (secs % 60).toString().padLeft(2, '0');
+  return "$hours:$minutes:$seconds";
+}
 
-///
 typedef _Fn = void Function();
 
-/// Example app.
 class SimpleRecorder extends StatefulWidget {
   @override
   _SimpleRecorderState createState() => _SimpleRecorderState();
@@ -30,21 +32,28 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
   bool _mRecorderIsInited = false;
   bool _mplaybackReady = false;
   final String _mPath = 'flutter_sound_example.aac';
+  Stopwatch _stopwatch;
+  Timer _timer;
 
   @override
   void initState() {
-    _mPlayer.openAudioSession().then((value) {
-      setState(() {
-        _mPlayerIsInited = true;
-      });
-    });
+        _mPlayer.openAudioSession().then((value) {
+          setState(() {
+            _mPlayerIsInited = true;
+          });
+        });
 
     openTheRecorder().then((value) {
-      setState(() {
-        _mRecorderIsInited = true;
-      });
-    });
+          setState(() {
+            _mRecorderIsInited = true;
+          });
+        });
+
     super.initState();
+    _stopwatch = Stopwatch();
+    _timer = new Timer.periodic(new Duration(milliseconds: 30), (timer) {
+      setState(() {});
+    });
   }
 
   @override
@@ -54,6 +63,7 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
 
     _mRecorder.closeAudioSession();
     _mRecorder = null;
+    _timer.cancel();
     super.dispose();
   }
 
@@ -122,12 +132,27 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
     return _mRecorder.isStopped ? record : stopRecorder;
   }
 
+  recording(){
+   return _mRecorder.isStopped ? record : stopRecorder;
+  }
+
   _Fn getPlaybackFn() {
     if (!_mPlayerIsInited || !_mplaybackReady || !_mRecorder.isStopped) {
       return null;
     }
     return _mPlayer.isStopped ? play : stopPlayer;
   }
+
+  void handleStartStop() {
+    if (_stopwatch.isRunning) {
+      _stopwatch.stop();
+    } else {
+      _stopwatch.start();
+    }
+    setState(() {});    // re-render the page
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -164,10 +189,8 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                       ),
                       //Increment numbers as the recorder is recording
                       child: Center(
-                        child: Text(
-                          '00 : 00',
-                          style: TextStyle(fontSize: 50.0),
-                        ),
+                        child: Text(formatTime(_stopwatch.elapsedMilliseconds),
+                            style: TextStyle(fontSize: 48.0)),
                       ),
                     ),
                   ),
@@ -185,12 +208,21 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                         borderRadius: BorderRadius.circular(360.0),
                         color: Colors.white38,
                       ),
-                      child: Center(
-                        //While recording change the icon to the block icon
-                        child: FaIcon(
-                          FontAwesomeIcons.microphone,
-                          color: Colors.red,
-                          size: 30.0,
+                      child: GestureDetector(
+                        onTap: handleStartStop,
+                        child: Center(
+                          //While recording change the icon to the block icon
+                          child: GestureDetector(
+                            onTap: (){
+                              handleStartStop();
+                              return _mRecorder.isRecording ? stopRecorder() : record();
+                            },
+                            child: FaIcon(
+                              _stopwatch.isRunning ? FontAwesomeIcons.stopCircle : FontAwesomeIcons.microphone,
+                              color: _stopwatch.isRunning ? Colors.black : Colors.red,
+                              size: 30.0,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -204,13 +236,17 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                         borderRadius: BorderRadius.circular(360.0),
                         color: Colors.white38,
                       ),
+                      child: GestureDetector(
+                        onTap: (){
+                          play();
+                        },
                         child: Center(
                           child: FaIcon(
-                            //while play change the icon to the block icon to indicate stop
                             FontAwesomeIcons.play,
                             size: 30.0,
                           ),
                         ),
+                      ),
                     ),
                   ],
                 ),
