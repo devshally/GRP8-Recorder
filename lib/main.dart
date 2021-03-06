@@ -201,15 +201,15 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      height: 100.0,
-                      width: 100.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(360.0),
-                        color: Colors.white38,
-                      ),
-                      child: GestureDetector(
-                        onTap: handleStartStop,
+                    GestureDetector(
+                      onTap: handleStartStop,
+                      child: Container(
+                        height: 100.0,
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(360.0),
+                          color: Colors.white38,
+                        ),
                         child: Center(
                           //While recording change the icon to the block icon
                           child: GestureDetector(
@@ -229,17 +229,17 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                     SizedBox(
                       width: 35.0,
                     ),
-                    Container(
-                      height: 100.0,
-                      width: 100.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(360.0),
-                        color: Colors.white38,
-                      ),
-                      child: GestureDetector(
-                        onTap: (){
-                          play();
-                        },
+                    GestureDetector(
+                      onTap: (){
+                        play();
+                      },
+                      child: Container(
+                        height: 100.0,
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(360.0),
+                          color: Colors.white38,
+                        ),
                         child: Center(
                           child: FaIcon(
                             FontAwesomeIcons.play,
