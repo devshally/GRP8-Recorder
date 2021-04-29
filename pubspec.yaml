@@ -13,12 +13,13 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.0
-  flutter_sound: ^7.7.0+1
-  permission_handler: ^5.1.0+2
-  path_provider: ^1.6.27
-  path: ^1.7.0
-  intl: ^0.16.1
+  flutter_sound: ^8.1.1
+  permission_handler: ^7.0.0
+  path_provider: ^2.0.1
+  path: ^1.8.0
+  intl: ^0.17.0
   font_awesome_flutter: ^8.11.0
+  animated_text_kit: ^4.2.1
 
 dev_dependencies:
   flutter_test:
@@ -28,12 +29,7 @@ flutter:
 
   uses-material-design: true
 
-  # assets:
-  #   - images/
-
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  fonts:
+    - family: Lora
+      fonts:
+        - asset: fonts/Lora-VariableFont_wght.ttf
