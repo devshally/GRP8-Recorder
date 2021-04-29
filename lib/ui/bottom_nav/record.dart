@@ -67,6 +67,38 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
     super.dispose();
   }
 
+  InputDecoration kFieldDecoration = InputDecoration(
+    labelText: '',
+    labelStyle: TextStyle(
+      fontFamily: 'Circular Std Book',
+      fontSize: 15,
+      color: Color(0XFF1F1F1F),
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(15),
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(15),
+      ),
+      borderSide: BorderSide(
+        width: 1.5,
+        color: Colors.deepOrange,
+      ),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(15),
+      ),
+      borderSide: BorderSide(
+        width: 1.5,
+        color: Color(0XFFD70F0F),
+      ),
+    ),
+  );
+
   Future<void> openTheRecorder() async {
     if (!kIsWeb) {
       var status = await Permission.microphone.request();
@@ -171,16 +203,26 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text('Name Recording'),
-          content: TextFormField(
-            autovalidateMode: validate,
-            validator: (value) {
-              return value.length < 1 ? "Please enter a filename" : null;
-            },
-            controller: _fileName,
+          content: Container(
+            child: TextFormField(
+              keyboardType: TextInputType.text,
+              controller: _fileName,
+              autovalidateMode: validate,
+              validator: (value) {
+                return value.length < 1 ? "Please enter a filename" : null;
+              },
+              style: TextStyle(
+                fontFamily: 'Circular Std Book',
+                fontSize: 15,
+                color: Color(0XFF1F1F1F),
+              ),
+              decoration: kFieldDecoration.copyWith(labelText: 'Filename'),
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () {
+                FocusScope.of(context).requestFocus(new FocusNode());
                 Navigator.pop(context);
                 record();
               },
