@@ -114,8 +114,6 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
     _mRecorderIsInited = true;
   }
 
-  // ----------------------  Here is the code for recording and playback -------
-
   void record() async {
     try {
       bool hasPermissions = await Permission.microphone.isGranted &&
@@ -179,10 +177,7 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
         _mplaybackReady &&
         _mRecorder.isStopped &&
         _mPlayer.isStopped);
-    _mPlayer.startPlayer(
-        // fromURI: _mPath,
-        //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
-        whenFinished: () {
+    _mPlayer.startPlayer(whenFinished: () {
       setState(() {});
     }).then((value) {
       setState(() {});
@@ -193,6 +188,20 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
     _mPlayer.stopPlayer().then((value) {
       setState(() {});
     });
+  }
+
+  void pauseRecorder() async {
+    await _mRecorder.pauseRecorder().then((value) {
+      setState(() {});
+    });
+    handleStartStop();
+  }
+
+  void resumeRecorder() async {
+    await _mRecorder.resumeRecorder().then((value) {
+      setState(() {});
+    });
+    handleStartStop();
   }
 
   void toggleRecording() {
@@ -234,7 +243,12 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
     }
   }
 
-// ----------------------------- UI --------------------------------------------
+  void togglePausePlay() {
+    if (_mRecorder.isRecording) {
+      pauseRecorder();
+    } else
+      resumeRecorder();
+  }
 
   _Fn getRecorderFn() {
     if (!_mRecorderIsInited || !_mPlayer.isStopped) {
@@ -310,7 +324,9 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: toggleRecording,
+                      onTap: () {
+                        togglePausePlay();
+                      },
                       child: Container(
                         height: 100.0,
                         width: 100.0,
@@ -319,7 +335,6 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                           color: Colors.white38,
                         ),
                         child: Center(
-                          //While recording change the icon to the block icon
                           child: GestureDetector(
                             onTap: () {
                               toggleRecording();
@@ -337,6 +352,38 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      width: 5.0,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        togglePausePlay();
+                      },
+                      child: Container(
+                        height: 100.0,
+                        width: 100.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(360.0),
+                          color: Colors.white38,
+                        ),
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              togglePausePlay();
+                            },
+                            child: FaIcon(
+                              _stopwatch.isRunning
+                                  ? FontAwesomeIcons.pause
+                                  : FontAwesomeIcons.play,
+                              color: _stopwatch.isRunning
+                                  ? Colors.black
+                                  : Colors.black,
+                              size: 30.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -347,5 +394,3 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
     );
   }
 }
-
-//File only saves if it has an extension, timer works properly on start and stop, now i need to test if it actually playsback then I would automatically add an extension to it.
